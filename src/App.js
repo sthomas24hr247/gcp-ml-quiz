@@ -498,7 +498,7 @@ const GCPMLQuiz = () => {
 
           <h2 className="text-2xl font-bold text-gray-900 mb-6">{question.question}</h2>
 
-          <div className="space-y-4 mb-6">
+          <div className="grid grid-cols-1 gap-4 mb-6">
             {['A', 'B', 'C', 'D'].map((letter, index) => {
               // Handle both JSON array and object formats for options
               let optionText = '';
@@ -524,7 +524,7 @@ const GCPMLQuiz = () => {
                   }`}
                 >
                   <span className="font-bold mr-3">{letter}.</span>
-                  {optionText}
+                  <span className="break-words">{optionText}</span>
                 </button>
               );
             })}

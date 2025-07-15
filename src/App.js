@@ -248,9 +248,21 @@ const GCPMLQuiz = () => {
   const calculateScore = () => {
     let correct = 0;
     filteredQuestions.forEach(question => {
-      if (selectedAnswers[question.id] === question.correct_answer) {
-        correct++;
+      const userAnswer = selectedAnswers[question.id];
+      const correctAnswer = question.correct_answer;
+      
+      // Handle both letter format (A,B,C,D) and number format (1,2,3,4)
+      let isCorrect = false;
+      if (typeof correctAnswer === 'number') {
+        // Convert letter to number: A=1, B=2, C=3, D=4
+        const answerIndex = userAnswer ? ['A', 'B', 'C', 'D'].indexOf(userAnswer) + 1 : 0;
+        isCorrect = answerIndex === correctAnswer;
+      } else {
+        // Direct letter comparison
+        isCorrect = userAnswer === correctAnswer;
       }
+      
+      if (isCorrect) correct++;
     });
     return Math.round((correct / filteredQuestions.length) * 100);
   };
@@ -487,20 +499,35 @@ const GCPMLQuiz = () => {
           <h2 className="text-2xl font-bold text-gray-900 mb-6">{question.question}</h2>
 
           <div className="space-y-4 mb-6">
-            {['A', 'B', 'C', 'D'].map((letter) => (
-              <button
-                key={letter}
-                onClick={() => handleAnswerSelect(letter)}
-                className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
-                  selectedAnswers[question.id] === letter
-                    ? 'border-blue-500 bg-blue-50 text-blue-700'
-                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                }`}
-              >
-                <span className="font-bold mr-3">{letter}.</span>
-                {question[`option_${letter.toLowerCase()}`]}
-              </button>
-            ))}
+            {['A', 'B', 'C', 'D'].map((letter, index) => {
+              // Handle both JSON array and object formats for options
+              let optionText = '';
+              if (question.options) {
+                if (Array.isArray(question.options)) {
+                  optionText = question.options[index] || `Option ${letter} - Loading...`;
+                } else if (typeof question.options === 'object') {
+                  optionText = question.options[letter] || question.options[letter.toLowerCase()] || question.options[index] || `Option ${letter} - Loading...`;
+                }
+              } else {
+                // Fallback to individual columns if they exist
+                optionText = question[`option_${letter.toLowerCase()}`] || `Option ${letter} - Loading...`;
+              }
+
+              return (
+                <button
+                  key={letter}
+                  onClick={() => handleAnswerSelect(letter)}
+                  className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
+                    selectedAnswers[question.id] === letter
+                      ? 'border-blue-500 bg-blue-50 text-blue-700'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <span className="font-bold mr-3">{letter}.</span>
+                  {optionText}
+                </button>
+              );
+            })}
           </div>
 
           {/* Explanation */}

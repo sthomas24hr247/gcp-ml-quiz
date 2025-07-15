@@ -6,7 +6,7 @@ const supabaseUrl = "https://mfdycbuoabbrtqkdhief.supabase.co";
 const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mZHljYnVvYWJicnRxa2RoaWVmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI1NTk3NDAsImV4cCI6MjA2ODEzNTc0MH0.KMTUfQprfhGeutG5A79oPf2xUXYSFxzwTPTYQI45xFQ";
 
 const supabaseAPI = {
-  async from(table) {
+  from(table) {
     return {
       select: (columns = '*') => ({
         order: (column, options = {}) => ({

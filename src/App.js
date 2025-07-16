@@ -148,6 +148,8 @@ const GCPMLQuiz = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showExplanation, setShowExplanation] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
+  const [questionCount, setQuestionCount] = useState('all');
+  const [finalQuestions, setFinalQuestions] = useState([]);
 
   // Timer effect
   useEffect(() => {
@@ -209,7 +211,7 @@ const GCPMLQuiz = () => {
     loadQuizData();
   }, []);
 
-  // Filter questions
+  // Filter questions and prepare final quiz set
   useEffect(() => {
     let filtered = questions;
 
@@ -229,8 +231,36 @@ const GCPMLQuiz = () => {
     }
 
     setFilteredQuestions(filtered);
+    
+    // Apply question count limit and shuffle
+    let final = [...filtered];
+    if (questionCount !== 'all' && questionCount !== '') {
+      const count = parseInt(questionCount);
+      if (count > 0 && count < filtered.length) {
+        // Shuffle array and take the specified count
+        final = filtered.sort(() => 0.5 - Math.random()).slice(0, count);
+      }
+    }
+    
+    setFinalQuestions(final);
     setCurrentQuestion(0);
-  }, [selectedCategory, selectedDifficulty, searchTerm, questions]);
+  }, [selectedCategory, selectedDifficulty, searchTerm, questions, questionCount]);
+
+  // Handle stat card clicks
+  const handleStatCardClick = (cardType) => {
+    if (cardType === 'questions') {
+      const element = document.getElementById('question-count-selector');
+      if (element) element.scrollIntoView({ behavior: 'smooth' });
+    } else if (cardType === 'categories') {
+      const element = document.getElementById('category-selector');
+      if (element) element.focus();
+    } else if (cardType === 'difficulty') {
+      const element = document.getElementById('difficulty-selector');
+      if (element) element.focus();
+    } else if (cardType === 'aiml') {
+      alert('🧠 This quiz covers all major AI/ML topics in GCP: Machine Learning Engineering, Data Science & Analytics, Model Deployment & MLOps, Computer Vision & NLP, AutoML & Vertex AI. Perfect for GCP ML Engineer certification prep!');
+    }
+  };
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -241,12 +271,12 @@ const GCPMLQuiz = () => {
   const handleAnswerSelect = (answer) => {
     setSelectedAnswers({
       ...selectedAnswers,
-      [filteredQuestions[currentQuestion].id]: answer
+      [finalQuestions[currentQuestion].id]: answer
     });
   };
 
   const nextQuestion = () => {
-    if (currentQuestion < filteredQuestions.length - 1) {
+    if (currentQuestion < finalQuestions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setShowExplanation(false);
     }
@@ -274,7 +304,7 @@ const GCPMLQuiz = () => {
 
   const calculateScore = () => {
     let correct = 0;
-    filteredQuestions.forEach(question => {
+    finalQuestions.forEach(question => {
       const userAnswer = selectedAnswers[question.id];
       const correctAnswer = question.correct_answer;
       
@@ -288,7 +318,7 @@ const GCPMLQuiz = () => {
       
       if (isCorrect) correct++;
     });
-    return Math.round((correct / filteredQuestions.length) * 100);
+    return Math.round((correct / finalQuestions.length) * 100);
   };
 
   if (loading) {
@@ -326,7 +356,7 @@ const GCPMLQuiz = () => {
                 </h1>
               </div>
               <p style={{fontSize: '1.5rem', color: '#6b7280', marginBottom: '1rem'}}>
-                Master Google Cloud Machine Learning with {filteredQuestions.length} comprehensive questions
+                Master Google Cloud Machine Learning with {finalQuestions.length} comprehensive questions
               </p>
               <div style={{display: 'flex', justifyContent: 'center', gap: '1rem', fontSize: '0.875rem', color: '#9ca3af', flexWrap: 'wrap'}}>
                 <span style={{display: 'flex', alignItems: 'center'}}>
@@ -356,6 +386,7 @@ const GCPMLQuiz = () => {
                     Category Focus
                   </label>
                   <select
+                    id="category-selector"
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
                     style={{
@@ -383,6 +414,7 @@ const GCPMLQuiz = () => {
                     Difficulty Level
                   </label>
                   <select
+                    id="difficulty-selector"
                     value={selectedDifficulty}
                     onChange={(e) => setSelectedDifficulty(e.target.value)}
                     style={{
@@ -424,13 +456,59 @@ const GCPMLQuiz = () => {
               </div>
             </div>
 
+            {/* Question Count Selector */}
+            <div id="question-count-selector" style={{...styles.filterSection, marginBottom: '2rem'}}>
+              <h3 style={{fontSize: '1.25rem', fontWeight: '600', color: '#374151', marginBottom: '1rem', textAlign: 'center'}}>
+                📊 Choose Your Quiz Length
+              </h3>
+              <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem'}}>
+                {[
+                  {value: 'all', label: `🌐 All Questions (${filteredQuestions.length})`, desc: 'Complete comprehensive test'},
+                  {value: '10', label: '⚡ Quick Test (10)', desc: 'Fast knowledge check'},
+                  {value: '25', label: '📝 Standard Quiz (25)', desc: 'Balanced assessment'},
+                  {value: '50', label: '🎯 Extended Test (50)', desc: 'Thorough evaluation'},
+                  {value: '100', label: '🏆 Challenge Mode (100)', desc: 'Certification prep'}
+                ].map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => setQuestionCount(option.value)}
+                    style={{
+                      padding: '1rem',
+                      borderRadius: '12px',
+                      border: `2px solid ${questionCount === option.value ? '#2563eb' : '#e5e7eb'}`,
+                      backgroundColor: questionCount === option.value ? '#eff6ff' : '#ffffff',
+                      color: questionCount === option.value ? '#1d4ed8' : '#374151',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      textAlign: 'left'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (questionCount !== option.value) {
+                        e.target.style.borderColor = '#9ca3af';
+                        e.target.style.backgroundColor = '#f9fafb';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (questionCount !== option.value) {
+                        e.target.style.borderColor = '#e5e7eb';
+                        e.target.style.backgroundColor = '#ffffff';
+                      }
+                    }}
+                  >
+                    <div style={{fontWeight: 'bold', marginBottom: '0.25rem'}}>{option.label}</div>
+                    <div style={{fontSize: '0.875rem', opacity: 0.7}}>{option.desc}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Enhanced Stats Dashboard */}
             <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem'}}>
               {[
-                {color: {from: '#3b82f6', to: '#2563eb'}, icon: BookOpen, number: filteredQuestions.length, label: 'Questions Ready', badge: '📊 Comprehensive Coverage'},
-                {color: {from: '#10b981', to: '#059669'}, icon: Award, number: categories.length, label: 'ML Categories', badge: '🎯 Targeted Learning'},
-                {color: {from: '#8b5cf6', to: '#7c3aed'}, icon: Clock, number: '∞', label: 'Time Limit', badge: '⏰ Self-Paced Study'},
-                {color: {from: '#f59e0b', to: '#d97706'}, icon: () => <div style={{fontSize: '1.875rem'}}>🧠</div>, number: 'AI/ML', label: 'Focus Areas', badge: '🚀 Certification Ready'}
+                {color: {from: '#3b82f6', to: '#2563eb'}, icon: BookOpen, number: finalQuestions.length, label: 'Questions Ready', badge: '📊 Comprehensive Coverage', type: 'questions'},
+                {color: {from: '#10b981', to: '#059669'}, icon: Award, number: categories.length, label: 'ML Categories', badge: '🎯 Targeted Learning', type: 'categories'},
+                {color: {from: '#8b5cf6', to: '#7c3aed'}, icon: Clock, number: '∞', label: 'Time Limit', badge: '⏰ Self-Paced Study', type: 'difficulty'},
+                {color: {from: '#f59e0b', to: '#d97706'}, icon: () => <div style={{fontSize: '1.875rem'}}>🧠</div>, number: 'AI/ML', label: 'Focus Areas', badge: '🚀 Certification Ready', type: 'aiml'}
               ].map((stat, index) => (
                 <div
                   key={index}
@@ -440,6 +518,7 @@ const GCPMLQuiz = () => {
                   }}
                   onMouseEnter={() => setHoveredCard(index)}
                   onMouseLeave={() => setHoveredCard(null)}
+                  onClick={() => handleStatCardClick(stat.type)}
                 >
                   <stat.icon style={{width: '48px', height: '48px', margin: '0 auto 0.75rem', opacity: 0.8}} />
                   <h3 style={{fontSize: '1.875rem', fontWeight: 'bold', margin: '0'}}>{stat.number}</h3>
@@ -513,14 +592,14 @@ const GCPMLQuiz = () => {
               
               <button
                 onClick={() => setQuizStarted(true)}
-                disabled={filteredQuestions.length === 0}
+                disabled={finalQuestions.length === 0}
                 style={{
                   ...styles.startButton,
-                  opacity: filteredQuestions.length === 0 ? 0.5 : 1,
-                  cursor: filteredQuestions.length === 0 ? 'not-allowed' : 'pointer'
+                  opacity: finalQuestions.length === 0 ? 0.5 : 1,
+                  cursor: finalQuestions.length === 0 ? 'not-allowed' : 'pointer'
                 }}
                 onMouseEnter={(e) => {
-                  if (filteredQuestions.length > 0) {
+                  if (finalQuestions.length > 0) {
                     e.target.style.transform = 'scale(1.05)';
                     e.target.style.boxShadow = '0 20px 40px -12px rgba(0, 0, 0, 0.35)';
                   }
@@ -531,12 +610,12 @@ const GCPMLQuiz = () => {
                 }}
               >
                 <span style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                  🚀 Start Quiz ({filteredQuestions.length} questions)
+                  🚀 Start Quiz ({finalQuestions.length} questions)
                   <ChevronRight style={{width: '24px', height: '24px', marginLeft: '0.5rem'}} />
                 </span>
               </button>
               
-              {filteredQuestions.length === 0 && (
+              {finalQuestions.length === 0 && (
                 <p style={{color: '#ef4444', marginTop: '1rem', fontSize: '1.125rem'}}>
                   ⚠️ No questions match your current filters. Try adjusting your selection.
                 </p>
@@ -568,7 +647,7 @@ const GCPMLQuiz = () => {
               </div>
               <p style={{fontSize: '1.25rem', color: '#6b7280'}}>
                 You answered {Object.keys(selectedAnswers).filter(qId => {
-                  const question = filteredQuestions.find(q => q.id === parseInt(qId));
+                  const question = finalQuestions.find(q => q.id === parseInt(qId));
                   const userAnswer = selectedAnswers[qId];
                   const correctAnswer = question?.correct_answer;
                   
@@ -577,7 +656,7 @@ const GCPMLQuiz = () => {
                     return answerIndex === correctAnswer;
                   }
                   return userAnswer === correctAnswer;
-                }).length} out of {filteredQuestions.length} questions correctly
+                }).length} out of {finalQuestions.length} questions correctly
               </p>
               <p style={{color: '#9ca3af', marginTop: '0.5rem'}}>
                 Time taken: {formatTime(timeElapsed)}
@@ -589,7 +668,7 @@ const GCPMLQuiz = () => {
                 <h3 style={{fontSize: '1.125rem', fontWeight: '600', color: '#14532d', marginBottom: '0.5rem'}}>Correct Answers</h3>
                 <p style={{fontSize: '1.875rem', fontWeight: 'bold', color: '#22c55e', margin: 0}}>
                   {Object.keys(selectedAnswers).filter(qId => {
-                    const question = filteredQuestions.find(q => q.id === parseInt(qId));
+                    const question = finalQuestions.find(q => q.id === parseInt(qId));
                     const userAnswer = selectedAnswers[qId];
                     const correctAnswer = question?.correct_answer;
                     
@@ -604,8 +683,8 @@ const GCPMLQuiz = () => {
               <div style={{backgroundColor: '#fef2f2', borderRadius: '12px', padding: '1.5rem'}}>
                 <h3 style={{fontSize: '1.125rem', fontWeight: '600', color: '#7f1d1d', marginBottom: '0.5rem'}}>Incorrect Answers</h3>
                 <p style={{fontSize: '1.875rem', fontWeight: 'bold', color: '#ef4444', margin: 0}}>
-                  {filteredQuestions.length - Object.keys(selectedAnswers).filter(qId => {
-                    const question = filteredQuestions.find(q => q.id === parseInt(qId));
+                  {finalQuestions.length - Object.keys(selectedAnswers).filter(qId => {
+                    const question = finalQuestions.find(q => q.id === parseInt(qId));
                     const userAnswer = selectedAnswers[qId];
                     const correctAnswer = question?.correct_answer;
                     
@@ -645,8 +724,8 @@ const GCPMLQuiz = () => {
     );
   }
 
-  const question = filteredQuestions[currentQuestion];
-  const progress = ((currentQuestion + 1) / filteredQuestions.length) * 100;
+  const question = finalQuestions[currentQuestion];
+  const progress = ((currentQuestion + 1) / finalQuestions.length) * 100;
 
   return (
     <div style={styles.gradientBg}>
@@ -700,7 +779,7 @@ const GCPMLQuiz = () => {
           
           <div style={{marginBottom: '1rem'}}>
             <div style={{display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem'}}>
-              <span>Question {currentQuestion + 1} of {filteredQuestions.length}</span>
+              <span>Question {currentQuestion + 1} of {finalQuestions.length}</span>
               <span>{Math.round(progress)}% Complete</span>
             </div>
             <div style={{width: '100%', backgroundColor: '#e5e7eb', borderRadius: '9999px', height: '8px'}}>
@@ -846,7 +925,7 @@ const GCPMLQuiz = () => {
                 {showExplanation ? 'Hide' : 'Show'} Explanation
               </button>
 
-              {currentQuestion === filteredQuestions.length - 1 ? (
+              {currentQuestion === finalQuestions.length - 1 ? (
                 <button
                   onClick={finishQuiz}
                   style={{

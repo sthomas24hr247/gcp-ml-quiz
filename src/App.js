@@ -651,6 +651,43 @@ const GCPMLQuiz = () => {
   return (
     <div style={styles.gradientBg}>
       <div style={{maxWidth: '1024px', margin: '0 auto', padding: '0 1rem'}}>
+        {/* Floating End Quiz Button */}
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          zIndex: 1000
+        }}>
+          <button
+            onClick={finishQuiz}
+            style={{
+              background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
+              color: 'white',
+              fontWeight: 'bold',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '12px',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '0.875rem',
+              boxShadow: '0 10px 25px -12px rgba(220, 38, 38, 0.4)',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem'
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 15px 35px -12px rgba(220, 38, 38, 0.6)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 10px 25px -12px rgba(220, 38, 38, 0.4)';
+            }}
+          >
+            🏁 End Quiz
+          </button>
+        </div>
+
         {/* Header */}
         <div style={{...styles.mainCard, marginBottom: '1.5rem'}}>
           <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem'}}>

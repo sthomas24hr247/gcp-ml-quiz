@@ -498,7 +498,7 @@ const GCPMLQuiz = () => {
 
           <h2 className="text-2xl font-bold text-gray-900 mb-6">{question.question}</h2>
 
-          <div className="grid grid-cols-1 gap-4 mb-6">
+          <div className="space-y-4 mb-6">
             {['A', 'B', 'C', 'D'].map((letter, index) => {
               // Handle both JSON array and object formats for options
               let optionText = '';
@@ -514,18 +514,21 @@ const GCPMLQuiz = () => {
               }
 
               return (
-                <button
-                  key={letter}
-                  onClick={() => handleAnswerSelect(letter)}
-                  className={`w-full p-4 text-left rounded-lg border-2 transition-all ${
-                    selectedAnswers[question.id] === letter
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <span className="font-bold mr-3">{letter}.</span>
-                  <span className="break-words">{optionText}</span>
-                </button>
+                <div key={letter} className="w-full">
+                  <button
+                    onClick={() => handleAnswerSelect(letter)}
+                    className={`w-full p-4 text-left rounded-lg border-2 transition-all block ${
+                      selectedAnswers[question.id] === letter
+                        ? 'border-blue-500 bg-blue-50 text-blue-700'
+                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <div className="flex flex-col">
+                      <span className="font-bold text-lg mb-2">{letter}.</span>
+                      <span className="text-gray-800 leading-relaxed">{optionText}</span>
+                    </div>
+                  </button>
+                </div>
               );
             })}
           </div>

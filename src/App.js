@@ -295,98 +295,204 @@ const GCPMLQuiz = () => {
 
   if (!quizStarted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="bg-white rounded-2xl shadow-xl p-8">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8">
+        <div className="max-w-6xl mx-auto px-4">
+          {/* Enhanced Header */}
+          <div className="bg-white rounded-3xl shadow-2xl p-8 mb-8 border border-gray-100">
             <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                🎯 GCP ML Engineer Certification Quiz
-              </h1>
-              <p className="text-xl text-gray-600">
-                Master Google Cloud Machine Learning with 287 comprehensive questions
+              <div className="flex justify-center items-center mb-6">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-full p-4 mr-4">
+                  <BookOpen className="w-12 h-12 text-white" />
+                </div>
+                <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  GCP ML Engineer Certification Quiz
+                </h1>
+              </div>
+              <p className="text-2xl text-gray-600 mb-4">
+                Master Google Cloud Machine Learning with {filteredQuestions.length} comprehensive questions
               </p>
-            </div>
-
-            {/* Filters */}
-            <div className="grid md:grid-cols-3 gap-4 mb-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <Filter className="inline w-4 h-4 mr-1" />
-                  Category
-                </label>
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="all">All Categories ({questions.length})</option>
-                  {categories.map(cat => (
-                    <option key={cat.id} value={cat.name}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <Award className="inline w-4 h-4 mr-1" />
-                  Difficulty
-                </label>
-                <select
-                  value={selectedDifficulty}
-                  onChange={(e) => setSelectedDifficulty(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="all">All Levels</option>
-                  <option value="Easy">Easy</option>
-                  <option value="Medium">Medium</option>
-                  <option value="Hard">Hard</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  <Search className="inline w-4 h-4 mr-1" />
-                  Search
-                </label>
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search questions..."
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
+              <div className="flex justify-center space-x-4 text-sm text-gray-500">
+                <span className="flex items-center">
+                  <Award className="w-4 h-4 mr-1" />
+                  Professional Level
+                </span>
+                <span className="flex items-center">
+                  <Clock className="w-4 h-4 mr-1" />
+                  Self-Paced
+                </span>
+                <span className="flex items-center">
+                  <BookOpen className="w-4 h-4 mr-1" />
+                  Real Exam Scenarios
+                </span>
               </div>
             </div>
 
-            {/* Quiz Stats */}
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-blue-50 rounded-lg p-6 text-center">
-                <BookOpen className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-                <h3 className="text-2xl font-bold text-gray-900">{filteredQuestions.length}</h3>
-                <p className="text-gray-600">Questions Available</p>
-              </div>
-              <div className="bg-green-50 rounded-lg p-6 text-center">
-                <Award className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                <h3 className="text-2xl font-bold text-gray-900">{categories.length}</h3>
-                <p className="text-gray-600">Categories</p>
-              </div>
-              <div className="bg-purple-50 rounded-lg p-6 text-center">
-                <Clock className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-                <h3 className="text-2xl font-bold text-gray-900">∞</h3>
-                <p className="text-gray-600">No Time Limit</p>
+            {/* Enhanced Filters */}
+            <div className="bg-gray-50 rounded-2xl p-6 mb-8">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">🎯 Customize Your Quiz Experience</h3>
+              <div className="grid md:grid-cols-3 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    <Filter className="inline w-4 h-4 mr-2" />
+                    Category Focus
+                  </label>
+                  <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg"
+                  >
+                    <option value="all">🌐 All Categories ({questions.length})</option>
+                    {categories.map(cat => (
+                      <option key={cat.id} value={cat.name}>
+                        📂 {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    <Award className="inline w-4 h-4 mr-2" />
+                    Difficulty Level
+                  </label>
+                  <select
+                    value={selectedDifficulty}
+                    onChange={(e) => setSelectedDifficulty(e.target.value)}
+                    className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg"
+                  >
+                    <option value="all">🎯 All Levels</option>
+                    <option value="Easy">🟢 Easy</option>
+                    <option value="Medium">🟡 Medium</option>
+                    <option value="Hard">🔴 Hard</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold text-gray-700">
+                    <Search className="inline w-4 h-4 mr-2" />
+                    Search Topics
+                  </label>
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="🔍 Search questions..."
+                    className="w-full p-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all text-lg"
+                  />
+                </div>
               </div>
             </div>
 
+            {/* Enhanced Stats Dashboard */}
+            <div className="grid md:grid-cols-4 gap-6 mb-8">
+              <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white text-center transform hover:scale-105 transition-transform">
+                <BookOpen className="w-12 h-12 mx-auto mb-3 opacity-80" />
+                <h3 className="text-3xl font-bold">{filteredQuestions.length}</h3>
+                <p className="text-blue-100">Questions Ready</p>
+                <div className="mt-2 text-xs bg-blue-400 bg-opacity-30 rounded-full px-3 py-1">
+                  📊 Comprehensive Coverage
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white text-center transform hover:scale-105 transition-transform">
+                <Award className="w-12 h-12 mx-auto mb-3 opacity-80" />
+                <h3 className="text-3xl font-bold">{categories.length}</h3>
+                <p className="text-green-100">ML Categories</p>
+                <div className="mt-2 text-xs bg-green-400 bg-opacity-30 rounded-full px-3 py-1">
+                  🎯 Targeted Learning
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white text-center transform hover:scale-105 transition-transform">
+                <Clock className="w-12 h-12 mx-auto mb-3 opacity-80" />
+                <h3 className="text-3xl font-bold">∞</h3>
+                <p className="text-purple-100">Time Limit</p>
+                <div className="mt-2 text-xs bg-purple-400 bg-opacity-30 rounded-full px-3 py-1">
+                  ⏰ Self-Paced Study
+                </div>
+              </div>
+
+              <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-6 text-white text-center transform hover:scale-105 transition-transform">
+                <div className="text-3xl mb-3">🧠</div>
+                <h3 className="text-2xl font-bold">AI/ML</h3>
+                <p className="text-orange-100">Focus Areas</p>
+                <div className="mt-2 text-xs bg-orange-400 bg-opacity-30 rounded-full px-3 py-1">
+                  🚀 Certification Ready
+                </div>
+              </div>
+            </div>
+
+            {/* Quiz Features */}
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-2xl p-6 border border-indigo-100">
+                <h3 className="text-xl font-bold text-indigo-800 mb-4">🎯 Quiz Features</h3>
+                <ul className="space-y-3 text-indigo-700">
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
+                    Real GCP ML Engineer exam scenarios
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
+                    Detailed explanations for every question
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
+                    Progress tracking and instant feedback
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full mr-3"></div>
+                    Advanced filtering and search capabilities
+                  </li>
+                </ul>
+              </div>
+
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-100">
+                <h3 className="text-xl font-bold text-green-800 mb-4">📚 Topics Covered</h3>
+                <ul className="space-y-3 text-green-700">
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                    Vertex AI & AutoML
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                    BigQuery ML & Data Engineering
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                    MLOps & Model Deployment
+                  </li>
+                  <li className="flex items-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                    Computer Vision & NLP
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Enhanced Start Button */}
             <div className="text-center">
+              <div className="mb-4">
+                <div className="inline-flex items-center bg-yellow-50 border border-yellow-200 rounded-full px-4 py-2 text-yellow-800">
+                  <Award className="w-4 h-4 mr-2" />
+                  Ready to test your GCP ML expertise?
+                </div>
+              </div>
+              
               <button
                 onClick={() => setQuizStarted(true)}
                 disabled={filteredQuestions.length === 0}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-lg text-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group relative bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-6 px-12 rounded-2xl text-xl transition-all duration-300 transform hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
-                Start Quiz ({filteredQuestions.length} questions)
+                <span className="flex items-center">
+                  🚀 Start Quiz ({filteredQuestions.length} questions)
+                  <ChevronRight className="w-6 h-6 ml-2 group-hover:translate-x-1 transition-transform" />
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity"></div>
               </button>
+              
+              {filteredQuestions.length === 0 && (
+                <p className="text-red-500 mt-4 text-lg">⚠️ No questions match your current filters. Try adjusting your selection.</p>
+              )}
             </div>
           </div>
         </div>
@@ -546,7 +652,7 @@ const GCPMLQuiz = () => {
             <button
               onClick={prevQuestion}
               disabled={currentQuestion === 0}
-              className="flex items-center px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center px-4 py-2 text-gray-600 hover:text-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronLeft className="w-5 h-5 mr-1" />
               Previous
@@ -563,9 +669,9 @@ const GCPMLQuiz = () => {
               {currentQuestion === filteredQuestions.length - 1 ? (
                 <button
                   onClick={finishQuiz}
-                  className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold transition-colors"
+                  className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold text-lg transition-colors shadow-lg"
                 >
-                  Finish Quiz
+                  🏁 Finish Quiz
                 </button>
               ) : (
                 <button
